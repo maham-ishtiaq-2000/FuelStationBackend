@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require('cors');
 const app = express();
 
+
 var corsOptions = {
     origin: "*",
     optionsSuccessStatus: 200 // For legacy browser support
@@ -24,7 +25,7 @@ app.use(require('./router/auth'));
 
 
 
-app.listen(3000 , () => {
+app.listen(process.env.PORT || 3000 , () => {
     console.log("Server is running at port number 3000")
 })
 

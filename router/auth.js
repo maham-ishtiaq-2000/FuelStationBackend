@@ -9,10 +9,39 @@ const csv = require('csv-parser');
 
 
 
+let dataArray = []
+fs.createReadStream("FuelStationData.csv")
+.pipe(csv())
+.on('data', function(data){
+    try {
+        dataArray = dataArray.concat(data)
+    }
+    catch(err) {
+        //error handler
+    }
+})
+.on('end',function(){
+    //some final operation
+});
+
+
+
 
 
 router.get("/",(req,res) => {
     res.send("ALLAH U AKBAR")
+})
+
+router.get("/allFuelData",async(req,res) => {
+    try{
+        const fuelData = await Fuel.find()
+        console.log("ALLAH U AKBAR")
+        console.log(fuelData.length)
+        res.status(200).json({success : true , data : fuelData})
+    }
+    catch(err){
+        console.log(err)
+    }
 })
 
 router.post('/register' , (req,res) => {
@@ -109,11 +138,11 @@ router.post("/addAnHotel" , async(req,res) => {
 })
 
 
-router.get("/getSpecificHotel/:city" , async(req,res) => {
+router.get("/getSpecificHotel" , async(req,res) => {
     
-    const {city} = req.params
+    
     try{
-        const hotel = await Hotel.find({city : city})
+        const hotel = await Hotel.find()
         res.status(200).json({data : hotel , message : "Have your hotels"})
     }
     catch{
@@ -123,6 +152,22 @@ router.get("/getSpecificHotel/:city" , async(req,res) => {
 
 
 
+router.post('/addFuelData' , async(req,res) => {
+        for(let i = 0 ; i < dataArray.length ; i++){
+            const {CardNumber,Department,postDate,transDate,Time,Merchant,DriverID,Units,UnitCost,fuelCost,nonFuelCost,GrossCost,netCost} = dataArray[i]
+            try{
+            const fuel = await new Fuel ({CardNumber,Department,postDate,transDate,Time,Merchant,DriverID,Units,UnitCost,fuelCost,nonFuelCost,GrossCost,netCost})
+            fuel.save()
+            console.log("done")
+            res.status(200).json({message : "Alhamdulillah done"})
+            }
+            catch(err){
+                console.log("sorry")
+            }
+        }
+       
+
+})
 
 
 
